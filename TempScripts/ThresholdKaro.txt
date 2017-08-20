@@ -1,0 +1,4 @@
+# class name, test name, threshold value in seconds
+# default threshold
+default,1.2
+TempScripts.JenkinsPlugInPythonUnitTest.SimpleTest,test_YNET_WGET,1
