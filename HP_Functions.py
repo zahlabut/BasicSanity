@@ -2364,10 +2364,6 @@ def RUN_MC_APIS_SCENARIOS(API_SERVER_DOMAIN, API_SERVER_PORT, IS_HTTPS_SETUP, AU
 
     return test_results
 
-
-
-
-
 def RUN_ESTIMATED_SERVER_TIME_TEST():
     ############################################### NV In PROXY MODE ################################################
     CLOSE_ALL_BROWSERS()
@@ -2658,24 +2654,15 @@ def RUN_ESTIMATED_SERVER_TIME_TEST():
 
     return {'RunningEstimatedTimeTest':'Done'}
 
-
-
-def GET_NV_ANALYTICS_CONFIGURATION_API_TEST(test_server_url):
+def GET_NV_ANALYTICS_CONFIGURATION_API_TEST():
     CLOSE_ALL_BROWSERS()
     CLEANER()
     completed_test_results={}
 
-    # Check uf configured HTTP server for testing is up:
-    test_server_result=HTTP_GET_SITE(test_server_url,1)
-    if 'HTTP_GET_SITE_Exception' in test_server_result.keys():
-        print 'Seems that your server is down, execution ill be stopped!!!'
-        print test_server_result
-        sys.exit(1)
-
     # Get configuration as JSON
     test_name='GetDefaultPortsAsJSON'
     get_json_obj=MC_APIS(ip=TM_IP,port=TM_PORT,user=TM_USER,password=TM_PASSWORD,https=TM_IS_HTTPS,method='GET',url_path='shunra/api/configuration/analyticssettings',
-                    additional_headers={'Accept':'application/json','Content-Type':'application/json'},request_payload={}, body_type='JSON', api_name='Get_NV_Analytics_Configuration')
+                    additional_headers={'Accept':'application/json','Content-Type':'application/json'},request_payload={}, body_type='JSON', api_name='Get_NV_Analytics_Configuration_As_JSON')
     get_json_obj_response=get_json_obj.RUN_REQUEST()
     PRINT_DICT(get_json_obj_response)
     print '\r\nMake sure that received JSON: '+get_json_obj_response['Content']+' contains default ports: 80 and 8080'
@@ -2683,9 +2670,9 @@ def GET_NV_ANALYTICS_CONFIGURATION_API_TEST(test_server_url):
 
 
     # Get configuration as XML
-    test_name='GetDefaultPortsAsJSON'
+    test_name='GetDefaultPortsAsXML'
     get_xml_obj=MC_APIS(ip=TM_IP,port=TM_PORT,user=TM_USER,password=TM_PASSWORD,https=TM_IS_HTTPS,method='GET',url_path='shunra/api/configuration/analyticssettings',
-                    additional_headers={'Accept':'application/xml','Content-Type':'application/xml'},request_payload={}, body_type='JSON', api_name='Get_NV_Analytics_Configuration')
+                    additional_headers={'Accept':'application/xml','Content-Type':'application/xml'},request_payload={}, body_type='JSON', api_name='Get_NV_Analytics_Configuration_As_XML')
     get_xml_obj_response=get_xml_obj.RUN_REQUEST()
     PRINT_DICT(get_xml_obj_response)
     print '\r\nMake sure that received XML: '+get_xml_obj_response['Content']+' contains default ports: 80 and 8080'
@@ -2694,23 +2681,29 @@ def GET_NV_ANALYTICS_CONFIGURATION_API_TEST(test_server_url):
     # Set configuration as JSON
     test_name='SetDefaultPortsAsJSON'
     set_json_obj=MC_APIS(ip=TM_IP,port=TM_PORT,user=TM_USER,password=TM_PASSWORD,https=TM_IS_HTTPS,method='PUT',url_path='shunra/api/configuration/analyticssettings',
-                    additional_headers={'Accept':'application/json','Content-Type':'application/json'},request_payload={"analysisPorts":"80,8080,8181,8284,8285,65000"}, body_type='JSON', api_name='Get_NV_Analytics_Configuration')
+                    additional_headers={'Accept':'application/json','Content-Type':'application/json'},request_payload={"analysisPorts":"80,8080,8181,8284,8285,65000"}, body_type='JSON', api_name='Set_NV_Analytics_Configuration_As_JSON')
     set_json_obj_response=set_json_obj.RUN_REQUEST()
     PRINT_DICT(set_json_obj_response)
     print '\r\nMake sure that received status code: '+str(set_json_obj_response['Status_Code'])+ ' is 204'
     completed_test_results[test_name]=CHOOSE_OPTION_FROM_LIST_1(['PASS','FAIL','N/A'],'Your test result:')
 
 
-    # Set configuration as JSON
+    # Set configuration as XML
     test_name='SetDefaultPortsAsXML'
     ports_as_xml='<AnalyticsSetting><analysisPorts>80,8080,8181,8284,8285,65000</analysisPorts></AnalyticsSetting>'
     set_xml_obj=MC_APIS(ip=TM_IP,port=TM_PORT,user=TM_USER,password=TM_PASSWORD,https=TM_IS_HTTPS,method='PUT',url_path='shunra/api/configuration/analyticssettings',
-                    additional_headers={'Accept':'application/xml','Content-Type':'application/xml'},request_payload=ports_as_xml, body_type='XML', api_name='Get_NV_Analytics_Configuration')
+                    additional_headers={'Accept':'application/xml','Content-Type':'application/xml'},request_payload=ports_as_xml, body_type='STRING', api_name='Set_NV_Analytics_Configuration_As_XML')
     set_xml_obj_response=set_xml_obj.RUN_REQUEST()
     PRINT_DICT(set_xml_obj_response)
-    #print '\r\nMake sure that received status code: '+str(set_xml_obj_response['Status_Code'])+ ' is 204'
-    #completed_test_results[test_name]=CHOOSE_OPTION_FROM_LIST_1(['PASS','FAIL','N/A'],'Your test result:')
+    print '\r\nMake sure that received status code: '+str(set_xml_obj_response['Status_Code'])+ ' is 204'
+    completed_test_results[test_name]=CHOOSE_OPTION_FROM_LIST_1(['PASS','FAIL','N/A'],'Your test result:')
 
+
+    # Manuel test #
+    test_name='Manual_Configured_By_API_Ports_test'
+    print 'Browse to you TM '+TM_IP+':'+TM_PORT+' and make sure that you see configured by API ports in:'
+    print 'HTTP analysis to be conducted on port(s)'
+    completed_test_results[test_name]=CHOOSE_OPTION_FROM_LIST_1(['PASS','FAIL','N/A'],'Your test result:')
 
 
 
@@ -2718,4 +2711,3 @@ def GET_NV_ANALYTICS_CONFIGURATION_API_TEST(test_server_url):
 
 
     return {'GET_NV_ANALYTICS_CONFIGURATION_API_TEST':'Done'}
-

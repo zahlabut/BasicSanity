@@ -242,7 +242,7 @@ for x in range(0,int(loop_number)):
     ###### Test cases for: "Estimated server time" ######
     if GET_NV_ANALYTICS_CONFIGURATION_API['ENABLED']==True:
         test_name='Get_NV_Analytics_Configuration_API_' + datetime.now().strftime('%Y-%m-%d_%H:%M:%S')
-        test_result=GET_NV_ANALYTICS_CONFIGURATION_API_TEST(GET_NV_ANALYTICS_CONFIGURATION_API['TEST_SERVER_URL'])
+        test_result=GET_NV_ANALYTICS_CONFIGURATION_API_TEST()
         INSERT_TO_LOG(TestLogFile,str(test_result))
         test_all_results.append(test_result)
 

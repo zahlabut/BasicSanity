@@ -1,4 +1,0 @@
-# class name, test name, threshold value in seconds
-# default threshold
-default,100
-TempScripts.JenkinsPlugInLocalMode.SimpleTest,test_YNET_WGET,1
