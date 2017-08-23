@@ -2711,3 +2711,138 @@ def GET_NV_ANALYTICS_CONFIGURATION_API_TEST():
 
 
     return {'GET_NV_ANALYTICS_CONFIGURATION_API_TEST':'Done'}
+
+def GET_NV_ANALYTICS_CONFIGURATION_API_CHANGES_FOR_MC(test_name):
+    SPEC_PRINT(['This test is developed for','NV in proxy mode only', 'Make sure your NV is configured to Proxy mode!!!'])
+    CLOSE_ALL_BROWSERS()
+    CLEANER()
+    completed_test_results={}
+    ports_parameters='?ports=8888,65000,80,443,8080,8090'
+
+
+    ### Transactions with all possible options ###
+    options=[{'reuseExistingByName':'false'},{'reuseExistingByName':'true'}]
+
+
+
+    for opt in options:
+        ### Kill all running emulations on NV (FORCE STOP API)###
+        kill_all=MC_APIS(ip=TM_IP,port=TM_PORT,user=TM_USER,password=TM_PASSWORD,https=TM_IS_HTTPS,method='PUT',url_path='shunra/api/emulation/resetall',
+                             additional_headers={'Accept':'application/json'}, api_name='FORCE_STOP')
+        kill_alls_response=kill_all.RUN_REQUEST()
+        PRINT_DICT(kill_alls_response)
+
+        ### Shunra API get profiles ###
+        # Simple GET profiles
+        get_profiles=MC_APIS(ip=TM_IP,port=TM_PORT,user=TM_USER,password=TM_PASSWORD,https=TM_IS_HTTPS,method='GET',url_path='shunra/api/profile',
+                             additional_headers={'Accept':'application/json'}, api_name='GET_PROFILES')
+        get_profiles_response=get_profiles.RUN_REQUEST()
+        PRINT_DICT(get_profiles_response)
+        all_profiles=get_profiles_response['Content_As_Dict']['profiles']
+        random_profile=random.choice(all_profiles)
+        all_profiles.remove(random_profile)
+
+        ### Start emulation API ###
+        profile_id=random_profile['id']
+        network_scenario=random_profile['name']
+        test_name=test_name+'_'+str(time.time())
+        device_id='zababun_device_id_123'
+        flow_id='zababun_flow_id_123'
+        src_ip=GET_MY_PUBLIC_IP()
+        pl_id='zababun_pl_id_123'
+        test_description='zababun_test_description'
+        start_post_data={"deviceId": device_id,
+                         "flows":[{"flowId": flow_id, "srcIp": src_ip, "profileId": profile_id, "isCaptureClientPL": True}],
+                         "testMetadata": {"testName":test_name, "description": test_description, "networkScenario": network_scenario}}
+        start_obj=MC_APIS(ip=TM_IP,port=TM_PORT,user=TM_USER,password=TM_PASSWORD,https=TM_IS_HTTPS,method='POST',url_path='shunra/api/emulation/custom',
+                          additional_headers={'Accept':'application/json','Content-Type':'application/json'},params={'mode':'MULTI_USER','useProxy':'true'},request_payload=start_post_data, api_name='START_API')
+        start_resp=start_obj.RUN_REQUEST()
+        PRINT_DICT(start_resp)
+        test_token=start_resp['Content_As_Dict']['testToken']
+
+        ### Connect API before start transaction ###
+        connect_obj=MC_APIS(ip=TM_IP,port=TM_PORT,user=TM_USER,password=TM_PASSWORD,https=TM_IS_HTTPS,method='POST',url_path='shunra/api/transactionmanager/'+test_token,
+                    additional_headers={'Accept':'application/json','Content-Type':'application/json'},request_payload={"overwriteExistingConnection":"true"}, body_type='JSON',api_name='CONNECT_FOR_TRANSACTIONS')
+        connect_resp=connect_obj.RUN_REQUEST()
+        transactionManagerSessionIdentifier=connect_resp['Content_As_Dict']['transactionManagerSessionIdentifier']
+        PRINT_DICT(connect_resp)
+
+        for x in range(1,4):
+            if opt['reuseExistingByName']=='false':
+                # Transaction Start #
+                start_transaction_data={"transactionName":"Trans_Reuse_By_Name_Is_False", "transactionDescription":"Trans_Reuse_By_Name_Is_False"}
+                start_trans_obj=MC_APIS(ip=TM_IP,port=TM_PORT,user=TM_USER,password=TM_PASSWORD,https=TM_IS_HTTPS,method='POST',
+                                        url_path='shunra/api/transactionmanager/transaction/'+transactionManagerSessionIdentifier,
+                                        additional_headers={'Accept':'application/json','Content-Type':'application/json'},request_payload=start_transaction_data, body_type='JSON', api_name='START_TRANSACTION')
+                start_trans_resp=start_trans_obj.RUN_REQUEST()
+                PRINT_DICT(start_trans_resp)
+                transactionIdentifier=start_trans_resp['Content_As_Dict']['transactionIdentifier']
+
+            if opt['reuseExistingByName']=='true':
+                # Transaction Start #
+                start_transaction_data={"transactionName":"Trans_Reuse_By_Name_Is_True", "transactionDescription":"Trans_Reuse_By_Name_Is_True"}
+                start_trans_obj=MC_APIS(ip=TM_IP,port=TM_PORT,user=TM_USER,password=TM_PASSWORD,https=TM_IS_HTTPS,method='POST',
+                                        url_path='shunra/api/transactionmanager/transaction/'+transactionManagerSessionIdentifier+'?reuseExistingByName=true',
+                                        additional_headers={'Accept':'application/json','Content-Type':'application/json'},request_payload=start_transaction_data, body_type='JSON', api_name='START_TRANSACTION')
+                start_trans_resp=start_trans_obj.RUN_REQUEST()
+                PRINT_DICT(start_trans_resp)
+                transactionIdentifier=start_trans_resp['Content_As_Dict']['transactionIdentifier']
+
+            # # Testing that XML works the same as JSON #
+            # if opt['reuseExistingByName']=='true':
+            #     # Transaction Start #
+            #     start_transaction_data={"transactionName":"Trans_Reuse_By_Name_Is_True", "transactionDescription":"Trans_Reuse_By_Name_Is_True"}
+            #     start_transaction_data='<startTransactionRequest><transactionName>Trans_Reuse_By_Name_Is_True</transactionName><transactionDescription>Trans_Reuse_By_Name_Is_True</transactionDescription></startTransactionRequest>'
+            #     start_trans_obj=MC_APIS(ip=TM_IP,port=TM_PORT,user=TM_USER,password=TM_PASSWORD,https=TM_IS_HTTPS,method='POST',
+            #                             url_path='shunra/api/transactionmanager/transaction/'+transactionManagerSessionIdentifier+'?reuseExistingByName=true',
+            #                             additional_headers={'Accept':'application/xml','Content-Type':'application/xml'},request_payload=start_transaction_data, body_type='STRING', api_name='START_TRANSACTION')
+            #     start_trans_resp=start_trans_obj.RUN_REQUEST()
+            #     PRINT_DICT(start_trans_resp)
+            #     print start_trans_resp['Content']
+            #     transactionIdentifier=start_trans_resp['Content'].split('transactionIdentifier')[0].replace('<','').replace('>','')
+            #     print transactionIdentifier
+
+            # Traffic #
+            print HTTP_GET_SITE('http://cnn.com',3,WGET_PROXIES)
+            print HTTP_GET_SITE('https://facebook.com',3,WGET_PROXIES)
+
+            # Stop Transaction #
+            #https://dev.hpenv.com/shunra/api/transactionmanager/transaction/{token}/{token}
+            stop_trans_obj=MC_APIS(ip=TM_IP,port=TM_PORT,user=TM_USER,password=TM_PASSWORD,https=TM_IS_HTTPS,method='PUT',url_path='shunra/api/transactionmanager/transaction/'+transactionManagerSessionIdentifier+'/'+transactionIdentifier,
+                            additional_headers={'Accept':'application/json','Content-Type':'application/json'},request_payload={}, body_type='JSON', api_name='STOP_TRANSACTION')
+            stop_trans_resp=stop_trans_obj.RUN_REQUEST()
+            PRINT_DICT(stop_trans_resp)
+
+            # Real time update #
+            random_profile=random.choice(all_profiles)
+            profile_id=random_profile['id']
+            network_scenario=random_profile['name']
+            real_time_update_post_data={ "testMetadata": { "networkScenario": network_scenario}, "flows": [{ "profileId": profile_id, "isDefaultFlow": "true", "flowId":flow_id}]}
+            real_time_update_obj=MC_APIS(ip=TM_IP,port=TM_PORT,user=TM_USER,password=TM_PASSWORD,https=TM_IS_HTTPS,method='PUT',url_path='shunra/api/emulation/custom/'+test_token,
+                              additional_headers={'Accept':'application/json','Content-Type':'application/json'},request_payload=real_time_update_post_data,api_name='REAL_TIME_UPDATE')
+            real_time_update_resp=real_time_update_obj.RUN_REQUEST()
+            PRINT_DICT(real_time_update_resp)
+
+        # Stop emulation API #
+        stop_put_data='''{"testTokens": ["token"]}'''.replace('token',test_token)
+        stop_obj=MC_APIS(ip=TM_IP,port=TM_PORT,user=TM_USER,password=TM_PASSWORD,https=TM_IS_HTTPS,method='PUT',url_path='shunra/api/emulation/stop',
+                        additional_headers={'Accept':'application/json','Content-Type':'application/json'},request_payload=stop_put_data, body_type='STRING', api_name='STOP_API')
+        stop_resp=stop_obj.RUN_REQUEST()
+        PRINT_DICT(stop_resp)
+
+
+        # Analyze test#
+        analyze_obj=MC_APIS(ip=TM_IP,port=TM_PORT,user=TM_USER,password=TM_PASSWORD,https=TM_IS_HTTPS,method='PUT',url_path='shunra/api/analysisreport/analyze/'+test_token+ports_parameters,
+                        additional_headers={'Accept':'application/json','Content-Type':'application/json'},request_payload={}, body_type='JSON', api_name='ANALYZE_API')
+        analyze_resp=analyze_obj.RUN_REQUEST()
+        #SPEC_PRINT([str(analyze_resp['Content_As_Dict'])])
+        PRINT_DICT(analyze_resp)
+
+    SPEC_PRINT(['Download NV Report for 2 scenarios:'
+                '1 - reuseExistingByName=false',
+                '2 - reuseExistingByName=true',
+                'Make sure that you see the diference',
+                'No N/A in report (where baseline) when reuseExistingByName=true'])
+
+    PRINT_DICT(completed_test_results)
+    return {'GET_NV_ANALYTICS_CONFIGURATION_API_CHANGES_FOR_MC':'Done'}

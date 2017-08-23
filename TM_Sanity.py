@@ -239,17 +239,19 @@ for x in range(0,int(loop_number)):
         INSERT_TO_LOG(TestLogFile,str(test_result))
         test_all_results.append(test_result)
 
-    ###### Test cases for: "Estimated server time" ######
+    ###### Test New API for Get Nv Analytics Configuration ports ######
     if GET_NV_ANALYTICS_CONFIGURATION_API['ENABLED']==True:
         test_name='Get_NV_Analytics_Configuration_API_' + datetime.now().strftime('%Y-%m-%d_%H:%M:%S')
         test_result=GET_NV_ANALYTICS_CONFIGURATION_API_TEST()
         INSERT_TO_LOG(TestLogFile,str(test_result))
         test_all_results.append(test_result)
 
-
-
-
-
+    ###### Start transaction API changes for MC Integration ######
+    if START_TRANSACTION_API_CHANGES_FOR_MC['ENABLED']==True:
+        test_name='Start_TransactionGet_API_Changes_' + datetime.now().strftime('%Y-%m-%d_%H:%M:%S')
+        test_result=GET_NV_ANALYTICS_CONFIGURATION_API_CHANGES_FOR_MC(test_name)
+        INSERT_TO_LOG(TestLogFile,str(test_result))
+        test_all_results.append(test_result)
 
 
 
