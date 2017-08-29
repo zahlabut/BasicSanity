@@ -249,7 +249,7 @@ for x in range(0,int(loop_number)):
     ###### Start transaction API changes for MC Integration ######
     if START_TRANSACTION_API_CHANGES_FOR_MC['ENABLED']==True:
         test_name='Start_TransactionGet_API_Changes_' + datetime.now().strftime('%Y-%m-%d_%H:%M:%S')
-        test_result=GET_NV_ANALYTICS_CONFIGURATION_API_CHANGES_FOR_MC(test_name)
+        test_result=START_TRANSACTION_API_REUSE_CHANGES_FOR_MC(test_name)
         INSERT_TO_LOG(TestLogFile,str(test_result))
         test_all_results.append(test_result)
 

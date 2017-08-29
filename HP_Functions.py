@@ -2180,23 +2180,21 @@ def RUN_MC_APIS_SCENARIOS(API_SERVER_DOMAIN, API_SERVER_PORT, IS_HTTPS_SETUP, AU
 
 
         # Transactions X in total #
-        for x in range(1,3):
+        for x in range(1,6):
             # Transaction Start #
-            start_transaction_data={"transactionName":"Trans_"+str(x), "transactionDescription":"Paka_paka_"+str(x)}
+            start_transaction_data={"transactionName":"Trans", "transactionDescription":"Paka_paka"}
             print start_transaction_data
-            start_trans_obj=MC_APIS(ip=API_SERVER_DOMAIN,port=API_SERVER_PORT,user=AUTH_USER,password=AUTH_PASS,https=IS_HTTPS_SETUP,method='POST',url_path='shunra/api/transactionmanager/transaction/'+transaction_id,
-                            additional_headers={'Accept':'application/json','Content-Type':'application/json'},request_payload=start_transaction_data, body_type='JSON', api_name='START_TRANSACTION')
+            start_trans_obj=MC_APIS(ip=API_SERVER_DOMAIN,port=API_SERVER_PORT,user=AUTH_USER,password=AUTH_PASS,https=IS_HTTPS_SETUP,method='POST',
+                                    url_path='shunra/api/transactionmanager/transaction/'+transaction_id+'?reuseExistingByName=true',
+                                    additional_headers={'Accept':'application/json','Content-Type':'application/json'},request_payload=start_transaction_data, body_type='JSON', api_name='START_TRANSACTION')
             start_trans_resp=start_trans_obj.RUN_REQUEST()
             PRINT_DICT(start_trans_resp)
 
             # Traffic #
-            OPEN_WEB_SITE_SELENIUM('http://ynet.co.il',proxy=SELENIUM_PROXY, timeout=10)
-            OPEN_WEB_SITE_SELENIUM('https://facebook.com',proxy=SELENIUM_PROXY, timeout=10)
-            #print HTTP_GET_SITE('http://cnn.com',1,WGET_PROXIES)
-            #print HTTP_GET_SITE('https://facebook.com',1,WGET_PROXIES)
-
-
-
+            #OPEN_WEB_SITE_SELENIUM('http://ynet.co.il',proxy=SELENIUM_PROXY, timeout=10)
+            #OPEN_WEB_SITE_SELENIUM('https://facebook.com',proxy=SELENIUM_PROXY, timeout=10)
+            print HTTP_GET_SITE('http://cnn.com',1,WGET_PROXIES)
+            print HTTP_GET_SITE('https://facebook.com',1,WGET_PROXIES)
 
 
             # Stop Transaction #
@@ -2205,6 +2203,18 @@ def RUN_MC_APIS_SCENARIOS(API_SERVER_DOMAIN, API_SERVER_PORT, IS_HTTPS_SETUP, AU
                             additional_headers={'Accept':'application/json','Content-Type':'application/json'},request_payload={}, body_type='JSON', api_name='STOP_TRANSACTION')
             stop_trans_resp=stop_trans_obj.RUN_REQUEST()
             PRINT_DICT(stop_trans_resp)
+
+
+            # Real time update #
+            random_profile=random.choice(all_profiles)
+            profile_id=random_profile['id']
+            network_scenario=random_profile['name']
+            real_time_update_post_data={ "testMetadata": { "networkScenario": network_scenario}, "flows": [{ "profileId": profile_id, "isDefaultFlow": "true", "flowId":flow_id}]}
+            real_time_update_obj=MC_APIS(ip=API_SERVER_DOMAIN,port=API_SERVER_PORT,user=AUTH_USER,password=AUTH_PASS,https=IS_HTTPS_SETUP,method='PUT',url_path='shunra/api/emulation/custom/'+test_token,
+                              additional_headers={'Accept':'application/json','Content-Type':'application/json'},request_payload=real_time_update_post_data,api_name='REAL_TIME_UPDATE')
+            real_time_update_resp=real_time_update_obj.RUN_REQUEST()
+            PRINT_DICT(real_time_update_resp)
+
 
 
         # Stop #
@@ -2712,7 +2722,7 @@ def GET_NV_ANALYTICS_CONFIGURATION_API_TEST():
 
     return {'GET_NV_ANALYTICS_CONFIGURATION_API_TEST':'Done'}
 
-def GET_NV_ANALYTICS_CONFIGURATION_API_CHANGES_FOR_MC(test_name):
+def START_TRANSACTION_API_REUSE_CHANGES_FOR_MC(test_name):
     SPEC_PRINT(['This test is developed for','NV in proxy mode only', 'Make sure your NV is configured to Proxy mode!!!'])
     CLOSE_ALL_BROWSERS()
     CLEANER()
