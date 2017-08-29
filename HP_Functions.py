@@ -2207,6 +2207,7 @@ def RUN_MC_APIS_SCENARIOS(API_SERVER_DOMAIN, API_SERVER_PORT, IS_HTTPS_SETUP, AU
 
             # Real time update #
             random_profile=random.choice(all_profiles)
+            all_profiles.remove(random_profile)
             profile_id=random_profile['id']
             network_scenario=random_profile['name']
             real_time_update_post_data={ "testMetadata": { "networkScenario": network_scenario}, "flows": [{ "profileId": profile_id, "isDefaultFlow": "true", "flowId":flow_id}]}
@@ -2825,6 +2826,7 @@ def START_TRANSACTION_API_REUSE_CHANGES_FOR_MC(test_name):
 
             # Real time update #
             random_profile=random.choice(all_profiles)
+            all_profiles.remove(random_profile)
             profile_id=random_profile['id']
             network_scenario=random_profile['name']
             real_time_update_post_data={ "testMetadata": { "networkScenario": network_scenario}, "flows": [{ "profileId": profile_id, "isDefaultFlow": "true", "flowId":flow_id}]}
