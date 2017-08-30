@@ -2138,18 +2138,18 @@ def RUN_MC_APIS_SCENARIOS(API_SERVER_DOMAIN, API_SERVER_PORT, IS_HTTPS_SETUP, AU
         print HTTP_GET_SITE('https://facebook.com',1,WGET_PROXIES)
 
 
-        # Realtime update #
-        random_profile=prof
-        while prof==random_profile:
-            random_profile=random.choice(all_profiles)
-        SPEC_PRINT([str(prof),str(random_profile)])
-        profile_id=random_profile['id']
-        network_scenario=random_profile['name']
-        real_time_update_post_data={ "testMetadata": { "networkScenario": network_scenario}, "flows": [{ "profileId": profile_id, "isDefaultFlow": "true", "flowId":flow_id}]}
-        real_time_update_obj=MC_APIS(ip=API_SERVER_DOMAIN,port=API_SERVER_PORT,user=AUTH_USER,password=AUTH_PASS,https=IS_HTTPS_SETUP,method='PUT',url_path='shunra/api/emulation/custom/'+test_token,
-                          additional_headers={'Accept':'application/json','Content-Type':'application/json'},request_payload=real_time_update_post_data,api_name='REAL_TIME_UPDATE')
-        real_time_update_resp=real_time_update_obj.RUN_REQUEST()
-        PRINT_DICT(real_time_update_resp)
+        # # Realtime update #
+        # random_profile=prof
+        # while prof==random_profile:
+        #     random_profile=random.choice(all_profiles)
+        # SPEC_PRINT([str(prof),str(random_profile)])
+        # profile_id=random_profile['id']
+        # network_scenario=random_profile['name']
+        # real_time_update_post_data={ "testMetadata": { "networkScenario": network_scenario}, "flows": [{ "profileId": profile_id, "isDefaultFlow": "true", "flowId":flow_id}]}
+        # real_time_update_obj=MC_APIS(ip=API_SERVER_DOMAIN,port=API_SERVER_PORT,user=AUTH_USER,password=AUTH_PASS,https=IS_HTTPS_SETUP,method='PUT',url_path='shunra/api/emulation/custom/'+test_token,
+        #                   additional_headers={'Accept':'application/json','Content-Type':'application/json'},request_payload=real_time_update_post_data,api_name='REAL_TIME_UPDATE')
+        # real_time_update_resp=real_time_update_obj.RUN_REQUEST()
+        # PRINT_DICT(real_time_update_resp)
 
 
         # Traffic #
@@ -2180,7 +2180,7 @@ def RUN_MC_APIS_SCENARIOS(API_SERVER_DOMAIN, API_SERVER_PORT, IS_HTTPS_SETUP, AU
 
 
         # Transactions X in total #
-        for x in range(1,6):
+        for pr in all_profiles:
             # Transaction Start #
             start_transaction_data={"transactionName":"Trans", "transactionDescription":"Paka_paka"}
             print start_transaction_data
@@ -2205,17 +2205,14 @@ def RUN_MC_APIS_SCENARIOS(API_SERVER_DOMAIN, API_SERVER_PORT, IS_HTTPS_SETUP, AU
             PRINT_DICT(stop_trans_resp)
 
 
-            # Real time update #
-            random_profile=random.choice(all_profiles)
-            all_profiles.remove(random_profile)
-            profile_id=random_profile['id']
-            network_scenario=random_profile['name']
+            # Realtime update #
+            profile_id=pr['id']
+            network_scenario=pr['name']
             real_time_update_post_data={ "testMetadata": { "networkScenario": network_scenario}, "flows": [{ "profileId": profile_id, "isDefaultFlow": "true", "flowId":flow_id}]}
             real_time_update_obj=MC_APIS(ip=API_SERVER_DOMAIN,port=API_SERVER_PORT,user=AUTH_USER,password=AUTH_PASS,https=IS_HTTPS_SETUP,method='PUT',url_path='shunra/api/emulation/custom/'+test_token,
                               additional_headers={'Accept':'application/json','Content-Type':'application/json'},request_payload=real_time_update_post_data,api_name='REAL_TIME_UPDATE')
             real_time_update_resp=real_time_update_obj.RUN_REQUEST()
             PRINT_DICT(real_time_update_resp)
-
 
 
         # Stop #
@@ -2826,7 +2823,6 @@ def START_TRANSACTION_API_REUSE_CHANGES_FOR_MC(test_name):
 
             # Real time update #
             random_profile=random.choice(all_profiles)
-            all_profiles.remove(random_profile)
             profile_id=random_profile['id']
             network_scenario=random_profile['name']
             real_time_update_post_data={ "testMetadata": { "networkScenario": network_scenario}, "flows": [{ "profileId": profile_id, "isDefaultFlow": "true", "flowId":flow_id}]}
