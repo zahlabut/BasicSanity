@@ -1,6 +1,7 @@
 ##########################
 PORT_NUMBER=80
 IS_HTTPS_SERVER=False
+RANDOM_CONTENT_TYPE=False
 ##########################
 
 import time,ssl,socket,random
@@ -9,6 +10,9 @@ import urlparse
 from urlparse import urlparse
 import BaseHTTPServer, SimpleHTTPServer
 
+if RANDOM_CONTENT_TYPE==True:
+    types=['Zababun_Type_'+str(x) for x in range(0,100)]
+    sub_types=['Zahlabut_Subtype_'+str(x) for x in range(0,100)]
 AWS_INT_IP=socket.gethostbyname(socket.gethostname())
 AWS_EXT_IP=urlopen('http://ip.42.pl/raw').read()
 HOST_NAME=AWS_EXT_IP
@@ -64,7 +68,10 @@ class MyHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
         s.protocol_version='HTTP/1.1'
         s.send_response(200)
         s.send_header("Connection", "keep-alive")
-        s.send_header("Content-Type", "text/html")
+        if RANDOM_CONTENT_TYPE==True:
+            s.send_header("Content-Type", random.choice(types)+'/'+random.choice(sub_types))
+        else:
+            s.send_header("Content-Type", "text/html")
         s.send_header("Content-Length", content_length)
         s.send_header("Generating-Data",data_creation_took)
         s.send_header("Sleep-Time-In-Sec",delay_time)

@@ -26,6 +26,26 @@ import sys
 from PIL import Image
 import socket
 
+def CONVERT_INI_TO_VARIABLES(ini_file_name):
+    print ini_file_name
+    try:
+        config = ConfigParser.ConfigParser()
+        config.read(ini_file_name)
+
+        dictionary = {}
+        for section in config.sections():
+            dictionary[section] = {}
+            for option in config.options(section):
+                dictionary[section][option] = config.get(section, option)
+
+        sections=config.sections()
+        for section in sections:
+            data=dictionary[section]
+            globals().update(data)
+    except Exception, e:
+        print '*** CONVERT_INI_TO_VARIABLES!!! ***', e
+        EXIT("**************** FATAL ERROR, CANNOT CONTINUE EXECUTION !!!   ******************")
+        sys.exit(1)
 
 def IS_JSON(myjson):
     try:

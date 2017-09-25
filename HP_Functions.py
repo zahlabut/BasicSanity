@@ -1618,6 +1618,7 @@ def GET_HAR_API_TESTING_FUNC(START_DEFAULT_TEST, IP, PORT, USER, PASSWORD, NV_PR
                 '4) com.hpe.nvproxy.includeHttpEntries = true in nvproxy.properties'])
     files_to_delete_after_test=[]
     completed_test_cases={}
+    CONTINUE('To continue?')
 
     test_cases=[
         {'Name':'Download HAR File - Basic',

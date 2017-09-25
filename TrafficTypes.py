@@ -162,7 +162,8 @@ def HTTP_GET_SITE(site_url,loops_number,proxies=None,request_headers=None,delay=
                     'Traffic_Execution_Time_[sec]':stop_total_time-start_total_time,'Is_Content_Length_Size':str(content_length_found)}
         if loops_number==1:
             return {'Function_Name':'HTTP_GET_SITE','Average_Download_Time_[msec]':sum(times)/len(times)*1000,'Total_Download_Size_[kb]':sum(sizes)/1024.0,
-                    'Traffic_Execution_Time_[sec]':stop_total_time-start_total_time,'Is_Content_Length_Size':str(content_length_found),'Response_Headers':r.headers,'Status_Code':r.status_code}
+                    'Traffic_Execution_Time_[sec]':stop_total_time-start_total_time,'Is_Content_Length_Size':str(content_length_found),'Response_Headers':r.headers,'Status_Code':r.status_code,
+                    'Request_Headers':request_headers}
     except Exception,e:
         INSERT_TO_LOG(exceptions_file,str({'HTTP_GET_SITE_Exception':str(e)}))
         return {'Function_Name':'HTTP_GET_SITE','HTTP_GET_SITE_Exception':str(e)}
@@ -482,6 +483,5 @@ def HLS_VLC(timeout=30, proxy=None):
     # if 'linux' in platform.system().lower():
     #     display.stop()
     return {'HLS_Traffic_Execution_Time':timeout}
-
 
 

@@ -41,6 +41,7 @@ def CONTINUE (message=''):
     else:
         print "No such option: '"+cont+"'"
         CONTINUE ()
+
 def CONVERT_INI_TO_VARIABLES(ini_file_name):
     try:
         config = ConfigParser.ConfigParser()
