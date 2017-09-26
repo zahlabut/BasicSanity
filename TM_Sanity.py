@@ -171,7 +171,6 @@ for x in range(0,int(loop_number)):
         for site in sites:
             SPEC_PRINT([str(sites.index(site)+1)+' --> '+site])
             test_name='Test_'+site.split('://')[-1]+'_'+datetime.now().strftime('%Y-%m-%d_%H:%M:%S')
-            print test_name
             test_result=TM_RUN_DEFAULT_SCENARIO_TEST(START_DEFAULT_TEST, TM_IP, TM_PORT, TM_USER, TM_PASSWORD, 'My_Flow', '1', '0', '2048.0', '2048.0', test_name, 'Stam',proxy_mode,
                                                      OPEN_WEB_SITE_SELENIUM, site, HTTP_TEST_ALEXA_SITES_SELENIUM_SETTINGS['PROXY'])
             files_to_save.append(test_result['ScreenshootName'])

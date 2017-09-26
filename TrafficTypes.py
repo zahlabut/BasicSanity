@@ -171,7 +171,6 @@ def HTTP_GET_SITE(site_url,loops_number,proxies=None,request_headers=None,delay=
 def SEND_HTTP_GETS_ON_SAME_TCP_STREAM(url,number_of_gets, proxy=None):
     result_dict={}
     #try:
-
     if proxy==None:
         s = requests.Session()
         for x in range(0, number_of_gets):
@@ -187,6 +186,13 @@ def SEND_HTTP_GETS_ON_SAME_TCP_STREAM(url,number_of_gets, proxy=None):
     if proxy!=None:
         s = requests.Session()
         for x in range(0,number_of_gets):
+
+
+            print 'DELAY 2'
+            time.sleep(2)
+
+
+
             url=url+'?http_get_number='+str(x+1)
             start=time.time()
             r=s.get(url,proxies=proxy,verify=False)

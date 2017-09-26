@@ -2375,6 +2375,7 @@ def RUN_MC_APIS_SCENARIOS(API_SERVER_DOMAIN, API_SERVER_PORT, IS_HTTPS_SETUP, AU
 
 def RUN_ESTIMATED_SERVER_TIME_TEST():
     ############################################### NV In PROXY MODE ################################################
+    SPEC_PRINT(['Start HTTP/S servers on Linux server and do not use Windows for that Purpose!!!','You want be able to use the same TCP socket in HTTP1.1 on Windows :( '])
     CLOSE_ALL_BROWSERS()
     CLEANER()
     test_results={}
