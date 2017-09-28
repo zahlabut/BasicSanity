@@ -103,7 +103,7 @@ def CLEANER():
         to_delete=['.jpg','.log','.cap','Test_Result','HARs_','.jpg','.html','.zip','.out','.txt','.har','test___'] +[fil for fil in os.listdir(path) if (fil.endswith('.csv') and fil not in lo_lagaat)]
         for fil in os.listdir(path):
             for k in to_delete:
-                if k in fil:
+                if k in fil and fil not in lo_lagaat:
                     try:
                         os.remove(os.path.join(path,fil))
                         deleted_files.append(fil)
