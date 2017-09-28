@@ -99,7 +99,7 @@ def CLEANER():
     deleted_files=[]
     use_path=[os.path.abspath('.'),os.path.join(os.path.abspath('.'),'TempScripts'),os.path.join(os.path.abspath('.'),'ParsePcapJsonFile'),os.path.join(os.path.abspath('.'))]
     for path in use_path:
-        lo_lagaat=['HLS_Links.csv','HTTPS_Sites_Top_100.csv','HLS_Links.csv','AlexaTopMilion.csv','ParamFiles','hpenv.cer','NV_Certigficate.cer']
+        lo_lagaat=['HLS_Links.csv','HTTPS_Sites_Top_100.csv','HLS_Links.csv','AlexaTopMilion.csv','ParamFiles','hpenv.cer','NV_Certigficate.cer','ThresholdKaro.txt']
         to_delete=['.jpg','.log','.cap','Test_Result','HARs_','.jpg','.html','.zip','.out','.txt','.har','test___'] +[fil for fil in os.listdir(path) if (fil.endswith('.csv') and fil not in lo_lagaat)]
         for fil in os.listdir(path):
             for k in to_delete:
